@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
 import numpy as np
 
-# config section
+# [CHANGE THIS STUFF TO ADJUST DISTRUBUTION]
 
 
 CSV_PATH = "rank_winnings_adjusted.csv"
@@ -12,14 +12,14 @@ CSV_PATH = "rank_winnings_adjusted.csv"
 #Distribution settings
 DIST_LOWER_BOUND = 100000      # Lower bound
 DIST_UPPER_BOUND = 1500000     # Upper bound
-DIST_BIN_COUNT   = None       # Number of bins(set int to override, None to autoscale)
+DIST_BIN_COUNT   = None       # Number of bins(set a specific num to override, None to autoscale)
 DIST_BIN_WIDTH   = 100000     # Target bin width when autoscaling
-DIST_FIELD       = "YTD"      # Field to analyze
+DIST_FIELD       = "YTD"     #dont change this
 
 
 def load_data(path: str) -> pd.DataFrame:
     df = pd.read_csv(path)
-    # remove whitespace
+   
     df.columns = df.columns.str.strip()
     return df
 
@@ -58,7 +58,7 @@ def plot_distribution(df: pd.DataFrame):
         linewidth=0.6,
     )
 
-    # Color gradient on bars
+    # Color 
     cmap = plt.cm.viridis
     norm = plt.Normalize(vmin=0, vmax=len(patches))
     for i, patch in enumerate(patches):
@@ -67,26 +67,23 @@ def plot_distribution(df: pd.DataFrame):
 
     # power law curve
     import warnings
-    # Calculate bin centers
     bin_centers = 0.5 * (bin_edges[:-1] + bin_edges[1:])
-    # Filter out empty bins and negative centers
     valid_bins = (counts > 0) & (bin_centers > 0)
-    
     if np.sum(valid_bins) > 1:
         log_x = np.log(bin_centers[valid_bins])
         log_y = np.log(counts[valid_bins])
         
-        # Fit: log(y) = m * log(x) + c => y = e^c * x^m
+        # Fit log(y) = m * log(x) + c -> y = e^c * x^m
         m, c = np.polyfit(log_x, log_y, 1)
         
-        # Generate points for curve
+        # points for curve
         x_min = max(bin_edges[0], 1)
         x_max = bin_edges[-1]
         x_curve = np.linspace(x_min, x_max, 200)
         k = np.exp(c)
         y_curve = k * (x_curve ** m)
         
-        # Format k 
+        # Format k so its readable
         base, exp = f"{k:.2e}".split('e')
         exp = int(exp)  # remove leading zeros
         label_str = rf"Power Law Fit ($y = {base} \times 10^{{{exp}}} \cdot x^{{{m:.2f}}}$)"
@@ -103,14 +100,14 @@ def plot_distribution(df: pd.DataFrame):
     )
     ax.xaxis.set_major_formatter(mticker.FuncFormatter(lambda x, _: f"${x / 1e6:.1f}M" if x >= 1e6 else f"${x / 1e3:.0f}K"))
 
-    # Add right y axis for probability
+    # right y axis for probability
     ax2 = ax.twinx()
     ax_ylim = ax.get_ylim()
     ax2.set_ylim([y / len(values) for y in ax_ylim])
     ax2.yaxis.set_major_formatter(mticker.PercentFormatter(1.0))
     ax2.set_ylabel("Percentage of Players", fontsize=11)
 
-    # Add median and mean lines
+    # median and mean lines [comment this stuff out if you think it clutters the graph]
     med = values.median()
     mn = values.mean()
     ax.axvline(med, color="orange", linestyle="--", linewidth=1.5, label=f"Median: ${med:,.0f}")
