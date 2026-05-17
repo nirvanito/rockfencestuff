@@ -1,5 +1,14 @@
-**File Descriptions**
 
+Requirements:
+
+Install Python packages:
+python -m pip install numpy pandas scipy matplotlib seaborn openpyxl playwright
+
+If you want to run scraper.py, also install the Playwright browser:
+playwright install chromium
+
+
+**File Descriptions**
 Data collection stuff:
 1. scraper.py: Web scraper that pulls historical year-end ATP Singles Rankings (2000-2025)
 2. clean_earnings.py: standardizes raw ATP prize money files since I got them from different sources
@@ -13,6 +22,7 @@ Modeling:
    c. tests Lognormal vs. Power-Law distributions (Vuong test) 
    d. normalizes historical data for prize money inflation.
 3. earnings_dist_2025.py: snapshot of the 2025 earnings distribution (let me know if you want me to do this with the inflation-adjusted numbers since 2015 instead), with inequality (Lorenz curve)
+4. The 2015-2025 earnings dist file, does same thing as above file but 2015-2025 data (inflation adjusted)
 
 Simulation:
 1. simulation_pricing.py: Runs a 10k Monte Carlo simulation for a portfolio of players, including calibrated lognormal distributions, bust probabilities (I'll take your input on this after you take a look at the earnings distribution), aging curves, and inflation to determine purchase price required to hit a target IRR
